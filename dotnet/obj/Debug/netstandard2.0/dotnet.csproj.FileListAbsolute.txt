@@ -1,0 +1,9 @@
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\bin\Debug\netstandard2.0\dotnet.deps.json
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\bin\Debug\netstandard2.0\dotnet.dll
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\bin\Debug\netstandard2.0\dotnet.pdb
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\obj\Debug\netstandard2.0\dotnet.csprojResolveAssemblyReference.cache
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\obj\Debug\netstandard2.0\dotnet.csproj.CoreCompileInputs.cache
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\obj\Debug\netstandard2.0\dotnet.AssemblyInfoInputs.cache
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\obj\Debug\netstandard2.0\dotnet.AssemblyInfo.cs
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\obj\Debug\netstandard2.0\dotnet.dll
+C:\Users\jnve11\source\cfp-csharp-and-rust\dotnet\obj\Debug\netstandard2.0\dotnet.pdb
