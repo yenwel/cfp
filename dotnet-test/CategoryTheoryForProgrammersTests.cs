@@ -8,9 +8,9 @@ namespace dotnet_test
     {
         [Fact]
         public void CompositionPreservesIdentity()
-        {
+        {            
             var f_one = CategoryTheoryForProgrammers.Compose<int,int,int>(CategoryTheoryForProgrammers.Identity,(int a) => -a);
-            var f_two = CategoryTheoryForProgrammers.Compose<int,int,int>(CategoryTheoryForProgrammers.Identity,(int a) => -a);
+            var f_two = CategoryTheoryForProgrammers.Compose<int,int,int>((int a) => -a, CategoryTheoryForProgrammers.Identity);
             Assert.True(f_one(8)==f_two(8));
             Assert.True(f_one(-8)==f_two(-8));
         }
