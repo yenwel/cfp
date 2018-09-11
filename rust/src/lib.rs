@@ -26,9 +26,12 @@ where Fa: Fn(Ta)->Tb, Ta: std::hash::Hash + std::cmp::Eq +  std::marker::Copy, T
     })
 }
 
+
 #[cfg(test)]
 mod tests {
     use std::ops::Neg;
+    use std::thread;
+    use std::time::Duration;
 
     #[test]
     fn composition_preserves_identity() 
@@ -37,5 +40,14 @@ mod tests {
         let f_two = super::compose(i8::neg, super::identity);
         assert!(f_one(8)==f_two(8));
         assert!(f_one(-8)==f_two(-8));        
+    }
+
+     #[test]
+    fn memoize_works() 
+    {
+        let f_addone = |a:  i8| {  thread::sleep(Duration::from_millis(100)); a + 1 };
+        let mut f_addonememo = super::memoize(f_addone);
+        assert!(f_addone(5)==f_addonememo(5));
+        assert!(f_addone(5)==f_addonememo(5));        
     }
 }
