@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn identity<T> (me:T) -> T {
     me
 }
@@ -6,6 +8,22 @@ pub fn compose<Fa:'static ,Fb: 'static,Ta,Tb,Tc> (fa : Fa, fb : Fb) -> Box<Fn(Ta
 where Fa: Fn(Ta) -> Tb, Fb : Fn(Tb) -> Tc
 {
    return Box::new(move | a : Ta | fb(fa(a)));
+}
+
+pub fn memoize<Fa: 'static,Ta: 'static,Tb: 'static>(fa : Fa) -> Box<FnMut(Ta)->Tb> 
+where Fa: Fn(Ta)->Tb, Ta: std::hash::Hash + std::cmp::Eq +  std::marker::Copy, Tb : std::marker::Copy
+{
+    let mut dict = HashMap::new();
+    Box::new(move |a:Ta| {
+        if dict.contains_key(&a) {
+            let res = dict.get(&a).unwrap();
+            *res
+        } else {
+            let fun_result = fa(a);
+            dict.insert(a, fun_result);
+            fun_result
+        }        
+    })
 }
 
 #[cfg(test)]
