@@ -31,7 +31,7 @@ where Fa: Fn(Ta)->Tb, Ta: std::hash::Hash + std::cmp::Eq +  std::marker::Copy, T
 mod tests {
     use std::ops::Neg;
     use std::thread;
-    use std::time::Duration;
+    use std::time::{Duration, SystemTime};
 
     #[test]
     fn composition_preserves_identity() 
@@ -47,7 +47,12 @@ mod tests {
     {
         let f_addone = |a:  i8| {  thread::sleep(Duration::from_millis(100)); a + 1 };
         let mut f_addonememo = super::memoize(f_addone);
+        let mut now = SystemTime::now(); 
         assert!(f_addone(5)==f_addonememo(5));
-        assert!(f_addone(5)==f_addonememo(5));        
+        // cargo test -- --nocapture
+        println!("{:?}",now.elapsed().unwrap());
+        now = SystemTime::now(); 
+        assert!(f_addone(5)==f_addonememo(5));         
+        println!("{:?}",now.elapsed().unwrap());       
     }
 }
