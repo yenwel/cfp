@@ -26,12 +26,35 @@ where Fa: Fn(Ta)->Tb, Ta: std::hash::Hash + std::cmp::Eq +  std::marker::Copy, T
     })
 }
 
+pub fn boolone(b: bool) -> bool
+{
+    b
+}
+
+pub fn booltwo(b: bool) -> bool
+{
+    !b
+}
+
+pub fn boolthree(_b: bool) -> bool
+{
+    true
+}
+
+pub fn boolfour(_b:bool) -> bool
+{
+    false
+}
+
 
 #[cfg(test)]
 mod tests {
+    extern crate rand;
+
     use std::ops::Neg;
     use std::thread;
     use std::time::{Duration, SystemTime};
+    use self::rand::random;
 
     #[test]
     fn composition_preserves_identity() 
@@ -53,6 +76,11 @@ mod tests {
         println!("{:?}",now.elapsed().unwrap());
         now = SystemTime::now(); 
         assert!(f_addone(5)==f_addonememo(5));         
-        println!("{:?}",now.elapsed().unwrap());       
+        println!("{:?}",now.elapsed().unwrap());
+        let f_rand = |_: i64| {random::<i64>()};
+        let mut f_randmemo = super::memoize(f_rand);
+        now = SystemTime::now();
+        assert!(f_randmemo(5)!=random::<i64>());               
+        println!("{:?}",now.elapsed().unwrap());
     }
 }
