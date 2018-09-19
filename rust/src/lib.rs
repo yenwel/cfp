@@ -131,7 +131,7 @@ mod tests {
     fn factorial_is_pure() 
     {          
         assert_purity_for_input(
-            |n : u64|
+            |n : u128|
             {
                 let mut result = 1;
                 for i in 2..n {result *= i;}
