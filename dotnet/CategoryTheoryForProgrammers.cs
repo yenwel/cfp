@@ -28,5 +28,6 @@ namespace dotnet
         public static bool booltwo(bool b) => !b;        
         public static bool boolthree(bool _b) => true;
         public static bool boolfour(bool _b) => false;
+
     }
 }

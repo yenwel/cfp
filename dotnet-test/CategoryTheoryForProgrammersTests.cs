@@ -16,7 +16,7 @@ namespace dotnet_test
             Assert.True(one(-8)==two(-8));
         }
 
-         [Fact]
+        [Fact]
         public void MemoizeWorks()
         {            
             Func<int,int> addOneLongRunning = (int a) => { Thread.Sleep(50); return a++; };
@@ -29,6 +29,87 @@ namespace dotnet_test
             Assert.True(addOneLongRunning(42)==addOneLongRunning(42)); 
             var runtimeTwo = (DateTime.Now - time );
             Assert.True(runtimeTwo < runtimeOne );
+        }
+
+        [Fact]
+        public void MemoizeRandomDoesNotWork()
+        {            
+            Func<int,double> random = (int _) => { var rand = new Random(); return rand.NextDouble();};
+            var randomMemoized = CategoryTheoryForProgrammers.Memoize(random);
+            Assert.True(randomMemoized(42)!=random(42));
+            Assert.True(randomMemoized(42)!=random(42));
+        }
+        
+        [Fact]
+        public void MemoizeRandomSeededWorks()
+        {            
+            Func<int,double> randomSeeded = (int seed) => { var rand = new Random(seed); return rand.NextDouble();};
+            var randomSeededMemoized = CategoryTheoryForProgrammers.Memoize(randomSeeded);
+            Assert.True(randomSeededMemoized(42)==randomSeeded(42));            
+            Assert.True(randomSeededMemoized(42)==randomSeeded(42));
+        }
+
+        private void assertPurityForInput<Tin,Tout>(Func<Tin,Tout> func,Tin input, bool isPure)
+        where Tout: IEquatable<Tout>
+        {            
+            var funcMemoized = CategoryTheoryForProgrammers.Memoize(func);
+            Assert.True(funcMemoized(input).Equals(func(input))==isPure);            
+            Assert.True(funcMemoized(input).Equals(func(input))==isPure);
+        }
+
+        [Fact]
+        public void FactorialIsPure()
+        {            
+           assertPurityForInput(
+               (int n) => 
+               {
+                   int i; 
+                   var result = 1; 
+                   for(i=2; i<=n; ++i) result *= i;
+                   return result;
+                },
+                42,
+                true);
+        }
+
+        /*[Fact]
+        public void ReadKeyIsImpure()
+        {            
+           assertPurityForInput(
+               (int _) => 
+               {
+                   return Console.ReadKey(true).KeyChar;
+                },
+                42,
+                false);
+        }*/
+
+        [Fact]
+        public void ReturnTrueIsPure()
+        {            
+           assertPurityForInput(
+                (int _) => 
+                {
+                    Console.WriteLine("Hello!");
+                    return true;
+                },
+                42,
+                true);
+        }
+
+
+        [Fact]
+        public void IncrementWithStaticInClosureScopeIsImpure()
+        {            
+            var y = 0;
+            assertPurityForInput(
+                (int x) => 
+                {
+                    y+=x;
+                    return y;
+                },
+                42,
+                false);
         }
     }
 }
