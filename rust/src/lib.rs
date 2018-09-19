@@ -54,7 +54,12 @@ mod tests {
     use std::ops::Neg;
     use std::thread;
     use std::time::{Duration, SystemTime};
-    use self::rand::random;
+    use self::rand::{random, Rng, SeedableRng, StdRng};
+    use std::iter;
+    use std::hash::Hash;
+    use std::cmp::Eq;
+    use std::marker::Copy;
+    use std::cmp::PartialEq;
 
     #[test]
     fn composition_preserves_identity() 
@@ -77,10 +82,92 @@ mod tests {
         now = SystemTime::now(); 
         assert!(f_addone(5)==f_addonememo(5));         
         println!("{:?}",now.elapsed().unwrap());
+    }
+
+    #[test]
+    fn memoize_random_does_not_work() 
+    {  
         let f_rand = |_: i64| {random::<i64>()};
         let mut f_randmemo = super::memoize(f_rand);
-        now = SystemTime::now();
-        assert!(f_randmemo(5)!=random::<i64>());               
+        let now = SystemTime::now(); 
+        assert!(f_randmemo(5)!=f_rand(5));               
         println!("{:?}",now.elapsed().unwrap());
     }
+
+    
+    #[test]
+    fn memoize_random_seeded_works() 
+    {          
+        let f_rand_seeded = |seed: [u8;32]| 
+        {                     
+            let mut rng: StdRng = SeedableRng::from_seed(seed);
+            rng.gen::<f64>()
+        };
+        let input_vec: Vec<u8> = iter::repeat(42).take(32).collect();     
+        let mut input = [0; 32];
+        input.copy_from_slice(&input_vec);
+        let mut f_rand_seeded_memo = super::memoize(f_rand_seeded);
+        let mut now = SystemTime::now();
+        assert!(f_rand_seeded_memo(input)==f_rand_seeded(input));                       
+        println!("{:?}",now.elapsed().unwrap());            
+        now = SystemTime::now();        
+        assert!(f_rand_seeded_memo(input)==f_rand_seeded(input));     
+        println!("{:?}",now.elapsed().unwrap());
+    }
+
+    fn assert_purity_for_input<Fa: 'static,Ta: 'static,Tb: 'static>(f : Fa, input: Ta, is_pure: bool)
+    where Fa: Fn(Ta)->Tb + Copy, Ta: Hash + Eq + Copy, Tb : Copy + PartialEq
+    {
+        let mut f_memo = super::memoize(f);
+        let mut now = SystemTime::now();
+        assert!((f_memo(input) == f(input)) == is_pure);                       
+        println!("{:?}",now.elapsed().unwrap());            
+        now = SystemTime::now();    
+        assert!((f_memo(input) == f(input)) == is_pure);      
+        println!("{:?}",now.elapsed().unwrap());
+    }
+
+    #[test]
+    fn factorial_is_pure() 
+    {          
+        assert_purity_for_input(
+            |n : u64|
+            {
+                let mut result = 1;
+                for i in 2..n {result *= i;}
+                result
+            },
+            21, //otherwise overflow lol
+            true
+        )
+    }
+
+    #[test]
+    fn return_true_is_pure() 
+    {          
+        assert_purity_for_input(
+            |_ :()|
+            {
+                println!("Hello!");
+                true
+            },
+            (),
+            true
+        )
+    }
+
+    /*#[test]
+    fn increment_with_static_in_closure_scope_is_impure() 
+    {
+        let mut y = 0;
+        assert_purity_for_input(
+            |x|
+            {
+                y +=x;
+                y
+            },
+            42,
+            false
+        )
+    }*/
 }
