@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 
 namespace dotnet
 {
+    using PartialFuncDouble = System.Func<double?,double?>; //no generic type aliases eh
     public static class CategoryTheoryForProgrammers
     {
         public static T Identity<T> (T me ) => me;
@@ -29,5 +30,22 @@ namespace dotnet
         public static bool boolthree(bool _b) => true;
         public static bool boolfour(bool _b) => false;
 
+        public static PartialFuncDouble IdentityPartial(PartialFuncDouble pfd) => Identity(pfd);
+        
+        public static PartialFuncDouble ComposePartial(PartialFuncDouble pfdOne, PartialFuncDouble pfdTwo) => Compose<double?,double?,double?>(pfdOne, pfdTwo);
+        public static double? SafeRoot(double? x){
+            if(x.HasValue && x >= 0) return Math.Sqrt(x.Value);
+            return null;
+        }
+
+        public static double? SafeReciprocal(double? x){
+            if(x.HasValue && x != 0) return 1/x;
+            return null;
+        }
+
+        public static double? SafeRootReciprocal(double? x) 
+        { 
+            return ComposePartial(SafeRoot,SafeReciprocal)(x);
+        }
     }
 }

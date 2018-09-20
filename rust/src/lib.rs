@@ -46,6 +46,16 @@ pub fn boolfour(_b:bool) -> bool
     false
 }
 
+type PartialFunc<Tin,Tout> = Fn(Tin) -> Option<Tout>; // generic type alias!!!
+
+fn identity_partialfn<Tin :'static,Tout:'static>(pf: Box<PartialFunc<Tin,Tout>>) -> Box<PartialFunc<Tin,Tout>>
+{
+    Box::new(move |tin: Tin| pf(tin))
+}
+
+/*fn compose_partialfn<Ta : 'static,Tb: 'static,Tc:'static>(pf_one: Box<PartialFunc<Ta,Tb>>, pf_two: Box<PartialFunc<Option<Tb>,Tc>>) -> Box<PartialFunc<Ta,Tc>> { 
+    Box::new(move |ta:Ta| compose(move |taa:Ta| pf_one(taa), move |tb:Option<Tb>| pf_two(tb))(ta)) 
+}*/
 
 #[cfg(test)]
 mod tests {
@@ -170,4 +180,6 @@ mod tests {
             false
         )
     }*/
+
+   
 }
