@@ -53,9 +53,32 @@ fn identity_partialfn<Tin :'static,Tout:'static>(pf: Box<PartialFunc<Tin,Tout>>)
     Box::new(move |tin: Tin| pf(tin))
 }
 
-/*fn compose_partialfn<Ta : 'static,Tb: 'static,Tc:'static>(pf_one: Box<PartialFunc<Ta,Tb>>, pf_two: Box<PartialFunc<Option<Tb>,Tc>>) -> Box<PartialFunc<Ta,Tc>> { 
-    Box::new(move |ta:Ta| compose(move |taa:Ta| pf_one(taa), move |tb:Option<Tb>| pf_two(tb))(ta)) 
-}*/
+fn compose_partialfn<Ta : 'static,Tb: 'static,Tc:'static>(pf_one: Box<PartialFunc<Ta,Tb>>, pf_two: Box<PartialFunc<Option<Tb>,Tc>>) -> Box<PartialFunc<Ta,Tc>> { 
+    
+     return Box::new(move | a : Ta | pf_two(pf_one(a)));
+}
+
+fn safe_root (x : Option<f64> ) -> Option<f64> {
+    if let Some(num) = x{
+        if num >= 0.0 {
+             return Some(num.sqrt());
+        }
+    }
+    None
+}
+
+fn safe_reciprocal (x: Option<f64>) -> Option<f64> {
+    if let Some(num) = x {
+        if num != 0.0 {
+            return Some(1.0 / num);
+        }
+    }
+    None
+}
+
+fn safe_root_reciprocal( x: Option<f64>) -> Option<f64> {
+    return compose_partialfn(Box::new(safe_root),Box::new(safe_reciprocal))(x);
+}
 
 #[cfg(test)]
 mod tests {
@@ -103,7 +126,6 @@ mod tests {
         assert!(f_randmemo(5)!=f_rand(5));               
         println!("{:?}",now.elapsed().unwrap());
     }
-
     
     #[test]
     fn memoize_random_seeded_works() 
