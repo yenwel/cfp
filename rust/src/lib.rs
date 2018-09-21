@@ -80,6 +80,11 @@ fn safe_root_reciprocal( x: Option<f64>) -> Option<f64> {
     return compose_partialfn(Box::new(safe_root),Box::new(safe_reciprocal))(x);
 }
 
+enum Either<Ta,Tb>{
+    Left(Ta),
+    Right(Tb)
+}
+
 #[cfg(test)]
 mod tests {
     extern crate rand;

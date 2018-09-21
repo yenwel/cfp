@@ -48,4 +48,21 @@ namespace dotnet
             return ComposePartial(SafeRoot,SafeReciprocal)(x);
         }
     }
+
+    public abstract class Either<Teither>{
+        public Teither Value {get; private set; }
+        public Either(Teither value) { Value = value;}
+    }
+
+    public class Left<Tleft> : Either<Tleft>
+    {
+        public Left(Tleft value) : base(value){ }
+    }
+
+    public class Right<Tright> : Either<Tright> 
+    {        
+        public Right(Tright value) : base(value){ }
+    }
+
+
 }
