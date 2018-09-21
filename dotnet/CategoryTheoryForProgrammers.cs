@@ -49,20 +49,22 @@ namespace dotnet
         }
     }
 
-    public abstract class Either<Teither>{
-        public Teither Value {get; private set; }
-        public Either(Teither value) { Value = value;}
+    public abstract class Either<Tleft,Tright>{
+        protected Tleft Left {get; private set; }
+        protected Tright Right {get; private set; }
+        protected Either(Tleft left) { Left = left;}        
+        protected Either(Tright right) { Right = right;}
     }
 
-    public class Left<Tleft> : Either<Tleft>
+    public class Left<Tleft, Tright> : Either<Tleft,Tright>
     {
+        public Tleft Value { get { return Left;} }
         public Left(Tleft value) : base(value){ }
     }
 
-    public class Right<Tright> : Either<Tright> 
-    {        
+    public class Right<Tleft, Tright> : Either<Tleft,Tright>
+    {                
+        public Tright Value { get { return Right;} }
         public Right(Tright value) : base(value){ }
     }
-
-
 }
