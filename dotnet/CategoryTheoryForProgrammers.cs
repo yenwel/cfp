@@ -67,4 +67,41 @@ namespace dotnet
         public Tright Value { get { return Right;} }
         public Right(Tright value) : base(value){ }
     }
+
+    public abstract class WorseThenEither<Tleft,Tright>{
+        protected Tleft Left {get; private set; }
+        protected Tright Right {get; private set; }
+        protected WorseThenEither(Tleft left) { Left = left;}        
+        protected WorseThenEither(Tright right) { Right = right;}
+        protected Tleft FarLeft {get; private set; }
+        protected Tright FarRight {get; private set; }
+        protected WorseThenEither(Tleft left, Tleft farLeft) { Left = left; FarLeft = farLeft;}        
+        protected WorseThenEither(Tright right, Tright farRight) { Right = right; FarRight = farRight;}
+    }
+
+    public class WorseThenLeft<Tleft, Tright> : WorseThenEither<Tleft,Tright>
+    {
+        public Tleft Value { get { return Left;} }
+        public WorseThenLeft(Tleft value) : base(value){ }
+    }
+
+    public class WorseThenRight<Tleft, Tright> : WorseThenEither<Tleft,Tright>
+    {                
+        public Tright Value { get { return Right;} }
+        public WorseThenRight(Tright value) : base(value){ }
+    }
+
+    public class WorseThenFarLeft<Tleft, Tright> : WorseThenEither<Tleft,Tright>
+    {
+        public Tleft Value { get { return Left;} }
+        public Tleft FarValue { get { return FarLeft;} }
+        public WorseThenFarLeft(Tleft value, Tleft farValue) : base(value, farValue){ }
+    }
+
+    public class WorseThenFarRight<Tleft, Tright> : WorseThenEither<Tleft,Tright>
+    {                
+        public Tright Value { get { return Right;} }        
+        public Tright FarValue { get { return FarRight;} }
+        public WorseThenFarRight(Tright value,Tright farValue) : base(value, farValue){ }
+    }
 }
