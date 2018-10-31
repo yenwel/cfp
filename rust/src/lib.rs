@@ -85,6 +85,14 @@ enum Either<Ta,Tb>{
     Right(Tb)
 }
 
+
+enum WorseThanEither<Ta,Tb>{
+    FarLeft(Ta),
+    Left(Ta),
+    Right(Tb),
+    FarRight(Tb),
+}
+
 #[cfg(test)]
 mod tests {
     extern crate rand;

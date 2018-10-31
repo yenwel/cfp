@@ -104,4 +104,31 @@ namespace dotnet
         public Tright FarValue { get { return FarRight;} }
         public WorseThenFarRight(Tright value,Tright farValue) : base(value, farValue){ }
     }
+
+    public class IntegerWithTwoInjections{
+
+        public int Value {get; private set;}
+        private IntegerWithTwoInjections(int value)
+        {
+            Value = value;
+        }
+        public static IntegerWithTwoInjections iSingleQoute(int n){
+            return  new IntegerWithTwoInjections(n);
+        }
+
+        public static IntegerWithTwoInjections jSingleQoute(bool b){
+            return new IntegerWithTwoInjections(b?0:1);
+        }
+        
+        
+        //IntegerWithTwoInjections clearly worse then Either because when injecting, 
+        //the values from int and bool overlap at (0 and 1)
+        public static IntegerWithTwoInjections mFactorize(Either<int,bool> e){
+            switch(e){
+                case Left<int,bool> i : return iSingleQoute(i.Value);
+                case Right<int,bool> j : return jSingleQoute(j.Value);
+                default : return new IntegerWithTwoInjections(0);
+            }
+        }
+    }
 }
