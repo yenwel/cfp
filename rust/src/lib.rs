@@ -93,6 +93,15 @@ enum WorseThanEither<Ta,Tb>{
     FarRight(Tb),
 }
 
+enum Shape {
+    Circle(f64),
+    Rect(f64,f64)
+}
+
+fn area(Shape s) -> f64 {
+     0.0
+}
+
 #[cfg(test)]
 mod tests {
     extern crate rand;
